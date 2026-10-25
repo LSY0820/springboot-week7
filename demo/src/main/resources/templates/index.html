@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="TemplateMo">
+
+        <title>이세영 포트폴리오</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+        <link th:href="@{/css/bootstrap-icons.css}" rel="stylesheet">
+
+        <!-- 최신 부트스트랩 아이콘 (AI 아이콘 bi-anthropic 등은 최신 버전에만 있음) -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+        <link th:href="@{/css/magnific-popup.css}" rel="stylesheet">
+
+        <link th:href="@{/css/templatemo-first-portfolio-style.css}" rel="stylesheet">
+        
+<!--
+
+TemplateMo 578 First Portfolio
+
+https://templatemo.com/tm-578-first-portfolio
+
+-->
+        <!-- [5주차] 네비게이션 로그인 사용자 표시 스타일 -->
+        <style>
+            .navbar-user { color: var(--white-color); font-size: var(--p-font-size); white-space: nowrap; }
+            .navbar.is-sticky .navbar-user { color: var(--dark-color); }
+            a.navbar-icon:hover { background: var(--secondary-color); color: var(--white-color); }
+            /* [6주차] 권한(ROLE) 배지, 관리자 메뉴 */
+            .role-badge { font-size: 11px; font-weight: var(--font-weight-bold); padding: 2px 8px; border-radius: 20px; color: var(--white-color); vertical-align: middle; }
+            .role-ADMIN   { background: #e05260; }
+            .role-MANAGER { background: #f0a030; }
+            .role-USER    { background: var(--secondary-color); }
+            .navbar .nav-link.nav-link-admin { color: #e05260; }
+            /* [6주차] 메뉴가 늘어나도 한 줄 유지 */
+            .navbar-nav .nav-link, .navbar .custom-btn { white-space: nowrap; }
+            @media (min-width: 992px) {
+                .navbar-expand-lg .navbar-nav .nav-link { margin-left: 12px; margin-right: 12px; }
+            }
+            @media (min-width: 992px) and (max-width: 1199px) {
+                .navbar-expand-lg .navbar-nav .nav-link { margin-left: 7px; margin-right: 7px; font-size: 15px; }
+                .navbar i.navbar-icon { display: none; }
+            }
+        </style>
+    </head>
+    
+    <body>
+
+        <section class="preloader">
+            <div class="spinner">
+                <span class="spinner-rotate"></span>    
+            </div>
+        </section>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <a th:href="@{/}" class="navbar-brand mx-auto mx-lg-0">LSY</a>
+
+                <!-- [5주차] 모바일 화면 : 로그인 / 로그아웃 버튼 -->
+                <div class="d-flex align-items-center d-lg-none">
+                    <a sec:authorize="isAnonymous()" class="custom-btn btn" th:href="@{/login}">
+                        <i class="bi-box-arrow-in-right me-1"></i>로그인
+                    </a>
+                    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="m-0">
+                        <button type="submit" class="custom-btn btn">
+                            <i class="bi-box-arrow-right me-1"></i>로그아웃
+                        </button>
+                    </form>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_1">홈페이지</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_2">소개</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_3">기술</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_4">프로젝트</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_5">연락처</a>
+                        </li>
+
+                        <!-- [5주차] 회원 전용 페이지 : 로그인하지 않으면 로그인 화면으로 이동 -->
+                        <!-- [6주차 추가 도전] 회원목록 메뉴는 관리자·매니저에게만 (URL 은 SecurityConfig 에서 잠금) -->
+                        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','MANAGER')">
+                            <a class="nav-link" th:href="@{/testdb}">회원목록</a>
+                        </li>
+
+                        <!-- [6주차] 로그인한 사람만 보이는 메뉴 : 내 정보 -->
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <a class="nav-link" th:href="@{/mypage}">내 정보</a>
+                        </li>
+
+                        <!-- [6주차] 관리자(ROLE_ADMIN)만 보이는 메뉴 : 메뉴를 숨겨도 주소(URL) 직접 입력은 막지 못한다! -->
+                        <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                            <a class="nav-link nav-link-admin" th:href="@{/admin/members}"><i class="bi-shield-lock me-1"></i>관리자</a>
+                        </li>
+                    </ul>
+
+                    <!-- [5주차] PC 화면 : 로그인 상태에 따라 버튼 전환 (sec:authorize) -->
+                    <div class="d-lg-flex align-items-center d-none ms-auto">
+                        <!-- 로그인 전 : 로그인 / 회원가입 -->
+                        <th:block sec:authorize="isAnonymous()">
+                            <a class="navbar-icon bi-person-plus me-3 text-center" th:href="@{/signup}" title="회원가입"></a>
+                            <a class="custom-btn btn" th:href="@{/login}">
+                                <i class="bi-box-arrow-in-right me-1"></i>로그인
+                            </a>
+                        </th:block>
+
+                        <!-- 로그인 후 : 사용자 아이디 + 로그아웃 (CSRF 때문에 POST 폼으로 전송) -->
+                        <th:block sec:authorize="isAuthenticated()">
+                            <i class="navbar-icon bi-person-circle me-2 text-center"></i>
+                            <span class="navbar-user me-3"><strong sec:authentication="name">user</strong>님
+                                <!-- [6주차] 내 권한 배지 : hasRole('권한') 이 true 인 것만 표시 -->
+                                <span sec:authorize="hasRole('ADMIN')" class="role-badge role-ADMIN">ADMIN</span>
+                                <span sec:authorize="hasRole('MANAGER')" class="role-badge role-MANAGER">MANAGER</span>
+                                <span sec:authorize="hasRole('USER')" class="role-badge role-USER">USER</span>
+                            </span>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="custom-btn btn">
+                                    <i class="bi-box-arrow-right me-1"></i>로그아웃
+                                </button>
+                            </form>
+                        </th:block>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+
+        <main>
+
+            <section class="hero d-flex justify-content-center align-items-center" id="section_1">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-7 col-12">
+                            <div class="hero-text">
+                                <div class="hero-title-wrap d-flex align-items-center mb-4">
+                                    <img th:src="@{/images/profile.png}" class="avatar-image avatar-image-large img-fluid" alt="">
+
+                                    <h1 class="hero-title ms-3 mb-0">안녕하세요!</h1>
+                                </div>
+
+                                <h2 class="mb-4">웹 백엔드와 AI 서비스를 만드는 개발자 이세영입니다.</h2>
+                                <p class="mb-4"><a class="custom-btn btn custom-link" href="#section_2">소개 보기</a></p>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5 col-12 position-relative">
+                            <div class="hero-image-wrap"></div>
+                            <img th:src="@{/images/portrait-happy-excited-man-holding-laptop-computer.png}" class="hero-image img-fluid" alt="">
+                        </div>
+
+                    </div>
+                </div>
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#535da1" fill-opacity="1" d="M0,160L24,160C48,160,96,160,144,138.7C192,117,240,75,288,64C336,53,384,75,432,106.7C480,139,528,181,576,208C624,235,672,245,720,240C768,235,816,213,864,186.7C912,160,960,128,1008,133.3C1056,139,1104,181,1152,202.7C1200,224,1248,224,1296,197.3C1344,171,1392,117,1416,90.7L1440,64L1440,0L1416,0C1392,0,1344,0,1296,0C1248,0,1200,0,1152,0C1104,0,1056,0,1008,0C960,0,912,0,864,0C816,0,768,0,720,0C672,0,624,0,576,0C528,0,480,0,432,0C384,0,336,0,288,0C240,0,192,0,144,0C96,0,48,0,24,0L0,0Z"></path></svg>
+            </section>
+
+
+            <section class="about section-padding" id="section_2">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-6 col-12">
+                            <img th:src="@{/images/couple-working-from-home-together-sofa.jpg}" class="about-image img-fluid" alt="">
+                        </div>
+
+                        <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                            <div class="about-thumb">
+
+                                <div class="section-title-wrap d-flex justify-content-end align-items-center mb-4">
+                                    <h2 class="text-white me-4 mb-0">내 소개</h2>
+
+                                    <img th:src="@{/images/profile.png}" class="avatar-image img-fluid" alt="">
+                                </div>
+
+                                <h3 class="pt-2 mb-3">조금 더 알아보기</h3>
+
+                                <p><strong>관심 있는 것</strong>: AI 활용 서비스, 음악 추천, 웹 트렌드</p>
+
+                                <p><strong>잘하는 것</strong>: 아이디어를 바로 만들어서 직접 배포까지 해보기 (Node.js 웹 서비스 운영 중)</p>
+
+                                <p><strong>하고 싶은 것</strong>: 스프링 부트로 데이터베이스까지 연동된 백엔드 서비스 만들기</p>
+
+                                <p class="mb-0">이 페이지는 <a href="https://templatemo.com/tm-578-first-portfolio" target="_blank" rel="noopener noreferrer">TemplateMo</a>의 First Portfolio 템플릿(Bootstrap 5.1.3)을 바탕으로 만들었습니다.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="featured section-padding">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-6 col-12">
+                            <div class="profile-thumb">
+                                <div class="profile-title">
+                                    <h4 class="mb-0">기본 정보</h4>
+                                </div>
+
+                                <div class="profile-body">
+                                    <p>
+                                        <span class="profile-small-title">이름</span> 
+                                        <span>이세영</span>
+                                    </p>
+
+                                    <p>
+                                        <span class="profile-small-title">관심 분야</span> 
+                                        <span>웹 백엔드 · AI</span>
+                                    </p>
+
+                                    <p>
+                                        <span class="profile-small-title">GitHub</span> 
+                                         <span><a href="https://github.com/LSY0820" target="_blank" rel="noopener noreferrer">LSY0820</a></span>
+                                    </p>
+
+                                    <p>
+                                        <span class="profile-small-title">이메일</span> 
+                                        <span><a href="mailto:snm50414@themoodmusic.com">snm50414@themoodmusic.com</a></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                            <div class="about-thumb">
+                                <div class="row">
+                                    <div class="col-lg-6 col-6 featured-border-bottom py-2">
+                                        <strong class="featured-numbers">3주차</strong>
+
+                                        <p class="featured-text">스프링 부트 학습</p>
+                                    </div>
+
+                                    <div class="col-lg-6 col-6 featured-border-start featured-border-bottom ps-5 py-2">
+                                        <strong class="featured-numbers">1</strong>
+
+                                        <p class="featured-text">운영 중인 웹 서비스</p>
+                                    </div>
+
+                                    <div class="col-lg-6 col-6 pt-4">
+                                        <strong class="featured-numbers">4</strong>
+
+                                        <p class="featured-text">관심 기술 분야</p>
+                                    </div>
+
+                                    <div class="col-lg-6 col-6 featured-border-start ps-5 pt-4">
+                                        <strong class="featured-numbers">4</strong>
+
+                                        <p class="featured-text">지원 언어 (한·일·중·영)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="clients section-padding">
+                <div class="container">
+                    <div class="row align-items-center">
+
+                        <div class="col-lg-12 col-12">
+                            <h3 class="text-center mb-5">사용해 본 기술 · 서비스</h3>
+                        </div>
+
+                        <div class="col-lg-2 col-4 ms-auto clients-item-height">
+                            <img th:src="@{/images/clients/cachet.svg}" class="clients-image img-fluid" alt="">
+                        </div>
+
+                        <div class="col-lg-2 col-4 clients-item-height">
+                            <img th:src="@{/images/clients/guitar-center.svg}" class="clients-image img-fluid" alt="">
+                        </div>
+
+                        <div class="col-lg-2 col-4 clients-item-height">
+                            <img th:src="@{/images/clients/tokico.svg}" class="clients-image img-fluid" alt="">
+                        </div>
+
+                        <div class="col-lg-2 col-4 clients-item-height">
+                            <img th:src="@{/images/clients/shopify.svg}" class="clients-image img-fluid" alt="">
+                        </div>
+
+                        <div class="col-lg-2 col-4 me-auto clients-item-height">
+                            <img th:src="@{/images/clients/profil-rejser.svg}" class="clients-image img-fluid" alt="">
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="services section-padding" id="section_3">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-10 col-12 mx-auto">
+                            <div class="section-title-wrap d-flex justify-content-center align-items-center mb-5">
+                                <img th:src="@{/images/handshake-man-woman-after-signing-business-contract-closeup.jpg}" class="avatar-image img-fluid" alt="">
+
+                                <h2 class="text-white ms-4 mb-0">기술</h2>
+                            </div>
+
+                            <div class="row pt-lg-5">
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0">웹</h3>
+
+                                            <div class="services-price-wrap ms-auto">
+                                                <p class="services-price-text mb-0">Backend</p>
+                                                <div class="services-price-overlay"></div>
+                                            </div>
+                                        </div>
+
+                                        <p>HTML, CSS, JS로 화면을 만들고 스프링 부트와 Node.js로 서버를 만듭니다.</p>
+
+                                        <a th:href="@{/detailed_web.html}" target="_blank" rel="noopener noreferrer" class="custom-btn custom-border-btn btn mt-3">자세히 보기</a>
+
+                                        <div class="services-icon-wrap d-flex justify-content-center align-items-center">
+                                            <i class="services-icon bi-globe"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb services-thumb-up">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0">AI</h3>
+
+                                            <div class="services-price-wrap ms-auto">
+                                                <p class="services-price-text mb-0">LLM</p>
+                                                <div class="services-price-overlay"></div>
+                                            </div>
+                                        </div>
+
+                                        <p>AI 모델 API를 연결해서 문장을 이해하고 추천해 주는 서비스를 만듭니다.</p>
+
+                                        <a th:href="@{/detailed_ai.html}" target="_blank" rel="noopener noreferrer" class="custom-btn custom-border-btn btn mt-3">자세히 보기</a>
+
+                                        <div class="services-icon-wrap d-flex justify-content-center align-items-center">
+                                            <i class="services-icon bi-anthropic"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0">보안</h3>
+
+                                            <div class="services-price-wrap ms-auto">
+                                                <p class="services-price-text mb-0">Security</p>
+                                                <div class="services-price-overlay"></div>
+                                            </div>
+                                        </div>
+
+                                        <p>HTTPS, 로그인 인증, 개인정보 보호처럼 안전한 웹 서비스를 위한 기본기를 익히고 있습니다.</p>
+
+                                        <a th:href="@{/detailed_security.html}" target="_blank" rel="noopener noreferrer" class="custom-btn custom-border-btn btn mt-3">자세히 보기</a>
+
+                                        <div class="services-icon-wrap d-flex justify-content-center align-items-center">
+                                            <i class="services-icon bi-shield-lock"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 col-12">
+                                    <div class="services-thumb services-thumb-up">
+                                        <div class="d-flex flex-wrap align-items-center border-bottom mb-4 pb-3">
+                                            <h3 class="mb-0">데이터</h3>
+
+                                            <div class="services-price-wrap ms-auto">
+                                                <p class="services-price-text mb-0">Data</p>
+                                                <div class="services-price-overlay"></div>
+                                            </div>
+                                        </div>
+
+                                        <p>차트 데이터를 모으고 정리해서 순위와 플레이리스트를 자동으로 만듭니다.</p>
+
+                                        <a th:href="@{/detailed_data.html}" target="_blank" rel="noopener noreferrer" class="custom-btn custom-border-btn btn mt-3">자세히 보기</a>
+
+                                        <div class="services-icon-wrap d-flex justify-content-center align-items-center">
+                                            <i class="services-icon bi-bar-chart-line"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="projects section-padding" id="section_4">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-8 col-md-8 col-12 ms-auto">
+                            <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
+                                <img th:src="@{/images/white-desk-work-study-aesthetics.jpg}" class="avatar-image img-fluid" alt="">
+
+                                <h2 class="text-white ms-4 mb-0">프로젝트</h2>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="projects-thumb">
+                                <div class="projects-info">
+                                    <small class="projects-tag">AI · 웹 서비스</small>
+
+                                    <h3 class="projects-title">무드 뮤직 (themoodmusic.com)</h3>
+                                </div>
+
+                                <a th:href="@{/images/projects/nikhil-KO4io-eCAXA-unsplash.jpg}" class="popup-image">
+                                    <img th:src="@{/images/projects/nikhil-KO4io-eCAXA-unsplash.jpg}" class="projects-image img-fluid" alt="">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="projects-thumb">
+                                <div class="projects-info">
+                                    <small class="projects-tag">스프링 부트</small>
+
+                                    <h3 class="projects-title">2주차 URL 매핑 실습</h3>
+                                </div>
+
+                                <a th:href="@{/images/projects/the-5th-IQYR7N67dhM-unsplash.jpg}" class="popup-image">
+                                    <img th:src="@{/images/projects/the-5th-IQYR7N67dhM-unsplash.jpg}" class="projects-image img-fluid" alt="">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="projects-thumb">
+                                <div class="projects-info">
+                                    <small class="projects-tag">포트폴리오</small>
+
+                                    <h3 class="projects-title">3주차 개인 포트폴리오</h3>
+                                </div>
+
+                                <a th:href="@{/images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg}" class="popup-image">
+                                    <img th:src="@{/images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg}" class="projects-image img-fluid" alt="">
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="contact section-padding" id="section_5">
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col-lg-6 col-md-8 col-12">
+                                <div class="section-title-wrap d-flex justify-content-center align-items-center mb-5">
+                                    <img th:src="@{/images/aerial-view-man-using-computer-laptop-wooden-table.jpg}" class="avatar-image img-fluid" alt="">
+
+                                    <h2 class="text-white ms-4 mb-0">연락하기</h2>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+
+                            <div class="col-lg-3 col-md-6 col-12 pe-lg-0">
+                                <div class="contact-info contact-info-border-start d-flex flex-column">
+                                    <strong class="site-footer-title d-block mb-3">기술</strong>
+
+                                    <ul class="footer-menu">
+                                        <li class="footer-menu-item"><a href="#section_3" class="footer-menu-link">웹</a></li>
+
+                                        <li class="footer-menu-item"><a href="#section_3" class="footer-menu-link">AI</a></li>
+
+                                        <li class="footer-menu-item"><a href="#section_3" class="footer-menu-link">보안</a></li>
+
+                                        <li class="footer-menu-item"><a href="#section_3" class="footer-menu-link">데이터</a></li>
+                                    </ul>
+
+                                    <strong class="site-footer-title d-block mt-4 mb-3">링크</strong>
+
+                                    <ul class="social-icon">
+                                        <li class="social-icon-item"><a href="https://github.com/LSY0820" target="_blank" rel="noopener noreferrer" class="social-icon-link bi-github"></a></li>
+
+                                                                                                                        <li class="social-icon-item"><a href="https://themoodmusic.com" target="_blank" rel="noopener noreferrer" class="social-icon-link bi-music-note-beamed"></a></li>
+                                    </ul>
+
+                                    <strong class="site-footer-title d-block mt-4 mb-3">함께하기</strong>
+
+                                    <p class="mb-0">프로젝트 제안은 언제든 환영해요</p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 ps-lg-0">
+                                <div class="contact-info d-flex flex-column">
+                                    <strong class="site-footer-title d-block mb-3">소개</strong>
+
+                                    <p class="mb-2">
+                                        웹 백엔드와 AI 서비스를 공부하고 있는 이세영입니다. 편하게 연락 주세요.
+                              </p>
+
+                                    <strong class="site-footer-title d-block mt-4 mb-3">이메일</strong>
+
+                                    <p>
+                                        <a href="mailto:snm50414@themoodmusic.com">
+                                            snm50414@themoodmusic.com
+                                        </a>
+                                    </p>
+
+                                    <strong class="site-footer-title d-block mt-4 mb-3">GitHub</strong>
+
+                                    <p class="mb-0">
+                                        <a href="https://github.com/LSY0820" target="_blank" rel="noopener noreferrer">
+                                            github.com/LSY0820
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-12 mt-5 mt-lg-0">
+                                <form action="#" method="get" class="custom-form contact-form" role="form">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="form-floating">
+                                                <input type="text" name="name" id="name" class="form-control" placeholder="이름" required="">
+                                                
+                                                <label for="name">이름</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-12"> 
+                                            <div class="form-floating">
+                                                <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="이메일" required="">
+                                                
+                                                <label for="email">이메일</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-6">
+                                            <div class="form-check form-check-inline">
+                                                <input name="website" type="checkbox" class="form-check-input" id="inlineCheckbox1" value="1">
+
+                                                <label class="form-check-label" for="inlineCheckbox1">
+                                                    <i class="bi-globe form-check-icon"></i>
+                                                    <span class="form-check-label-text">웹</span>
+                                                </label>
+                                          </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-6">
+                                            <div class="form-check form-check-inline">
+                                                <input name="branding" type="checkbox" class="form-check-input" id="inlineCheckbox2" value="1">
+
+                                                <label class="form-check-label" for="inlineCheckbox2">
+                                                    <i class="bi-anthropic form-check-icon"></i>
+                                                    <span class="form-check-label-text">AI</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-6">
+                                            <div class="form-check form-check-inline">
+                                                <input name="ecommerce" type="checkbox" class="form-check-input" id="inlineCheckbox3" value="1">
+
+                                                <label class="form-check-label" for="inlineCheckbox3">
+                                                    <i class="bi-shield-lock form-check-icon"></i>
+                                                    <span class="form-check-label-text">보안</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-6 col-6">
+                                            <div class="form-check form-check-inline me-0">
+                                                <input name="seo" type="checkbox" class="form-check-input" id="inlineCheckbox4" value="1">
+
+                                                <label class="form-check-label" for="inlineCheckbox4">
+                                                    <i class="bi-bar-chart-line form-check-icon"></i>
+                                                    <span class="form-check-label-text">데이터</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-12">
+                                            <div class="form-floating">
+                                                <textarea class="form-control" id="message" name="message" placeholder="하고 싶은 말"></textarea>
+                                                
+                                                <label for="message">하고 싶은 말</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-12 ms-auto">
+                                            <button type="submit" class="form-control">보내기</button>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-12 col-12">
+                        <div class="copyright-text-wrap">
+                            <p class="mb-0">
+                                <span class="copyright-text">Copyright © 2026 <a th:href="@{/}">이세영</a>. All rights reserved.</span>
+                                Design: 
+                                <a rel="sponsored" href="https://templatemo.com" target="_blank">TemplateMo</a>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+        <!-- JAVASCRIPT FILES -->
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
+        <script th:src="@{/js/jquery.sticky.js}"></script>
+        <script th:src="@{/js/click-scroll.js}"></script>
+        <script th:src="@{/js/jquery.magnific-popup.min.js}"></script>
+        <script th:src="@{/js/magnific-popup-options.js}"></script>
+        <script th:src="@{/js/custom.js}"></script>
+
+    </body>
+</html>

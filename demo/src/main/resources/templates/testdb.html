@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>데이터베이스 테스트</title>
+</head>
+<body>
+    <h1>User List</h1>
+    <!-- 1명 출력 (기존 코드)
+    <p>아이디(기본키) : <span th:text="${data4.id}"></span></p>
+    <p>이름 : <span th:text="${data4.name}"></span></p>
+    -->
+    <!-- th:each로 tr을 반복 처리 (users = 컨트롤러에서 넘긴 리스트) -->
+    <table border="1">
+        <tr>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>나이</th>
+            <th>성별</th>
+        </tr>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.age}"></td>
+            <td th:text="${user.gender}"></td>
+        </tr>
+    </table>
+    <p><a href="/">홈페이지 메인</a></p>
+</body>
+</html>

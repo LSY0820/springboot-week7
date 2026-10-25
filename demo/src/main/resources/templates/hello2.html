@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello2 페이지</title>
+</head>
+<body>
+    <h1>두번째 헬로 페이지</h1>
+    <!-- 컨트롤러에서 넘겨준 속성 5개 출력 -->
+    <p th:text="${name}"></p>
+    <p th:text="${major}"></p>
+    <p th:text="${subject}"></p>
+    <p th:text="${week}"></p>
+    <p th:text="${message}"></p>
+    <a href="/hello">첫번째 헬로 페이지</a><br>
+    <a href="/">홈페이지 메인</a>
+</body>
+</html>
